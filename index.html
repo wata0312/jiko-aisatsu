@@ -67,6 +67,10 @@
     th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; }
     th { background: #add8e6; font-weight: 700; }
     tbody tr:last-child td { border-bottom: 0; }
+    /* 月ごとの背景色：1・4・7・10月＝白、2・5・8・11月＝薄い赤、3・6・9・12月＝薄い青 */
+    tbody tr.month-white { background: #ffffff; }
+    tbody tr.month-pink { background: #fff0f1; }
+    tbody tr.month-blue { background: #eef6ff; }
     td:first-child { white-space: nowrap; }
     .small { color: var(--muted); font-size: .88rem; margin-top: 12px; }
     @media (max-width: 560px) {
@@ -189,6 +193,10 @@
   const tbody = document.getElementById("seasonTable");
   seasons.forEach(item => {
     const row = document.createElement("tr");
+    // 1・4・7・10月は白、2・5・8・11月は薄い赤、3・6・9・12月は薄い青
+    const monthColorGroup = item.month % 3;
+    row.classList.add(monthColorGroup === 1 ? "month-white" :
+                      monthColorGroup === 2 ? "month-pink" : "month-blue");
     [ `${item.month}月`, item.period, item.phrase, item.reading ].forEach(value => {
       const cell = document.createElement("td");
       cell.textContent = value;
