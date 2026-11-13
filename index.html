@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>時候の挨拶 作成ツール</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px 16px;
+      background: #f5f6f8;
+      color: #222;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+    }
+    main {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.04);
+    }
+    h1 { margin: 0 0 22px; font-size: 1.35rem; }
+    label { display: block; margin: 0 0 8px; font-weight: 600; }
+    select, textarea, button {
+      width: 100%;
+      font: inherit;
+      border-radius: 8px;
+    }
+    select {
+      padding: 12px;
+      border: 1px solid #cbd0d8;
+      background: #fff;
+      margin-bottom: 20px;
+    }
+    textarea {
+      display: block;
+      min-height: 190px;
+      padding: 14px;
+      line-height: 1.8;
+      border: 1px solid #cbd0d8;
+      resize: vertical;
+    }
+    button {
+      margin-top: 14px;
+      padding: 13px 16px;
+      border: 0;
+      background: #2457c5;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background: #1947a8; }
+    #status {
+      min-height: 1.5em;
+      margin: 8px 0 0;
+      color: #267342;
+      font-size: .9rem;
+    }
+    @media (max-width: 480px) {
+      main { padding: 20px 16px; }
+      body { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>案内文の時候 作成ツール</h1>
+
+    <label for="season">時候の挨拶を選択</label>
+    <select id="season">
+      <option value="1月">1月</option>
+      <option value="2月">2月</option>
+      <option value="3月">3月</option>
+      <option value="4月">4月</option>
+      <option value="5月">5月</option>
+      <option value="6月">6月</option>
+      <option value="7月">7月</option>
+      <option value="8月">8月</option>
+      <option value="9月">9月</option>
+      <option value="10月">10月</option>
+      <option value="11月">11月</option>
+      <option value="11月下旬">11月下旬</option>
+      <option value="12月">12月</option>
+      <option value="12月下旬">12月下旬</option>
+    </select>
+
+    <label for="letter">案内文</label>
+    <textarea id="letter" spellcheck="false"></textarea>
+
+    <button id="copy" type="button">文章をコピー</button>
+    <p id="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <script>
+    const phrases = {
+      "1月": "新春の候",
+      "2月": "立春の候",
+      "3月": "早春の候",
+      "4月": "陽春の候",
+      "5月": "新緑の候",
+      "6月": "初夏の候",
+      "7月": "盛夏の候",
+      "8月": "残暑の候",
+      "9月": "初秋の候",
+      "10月": "秋冷の候",
+      "11月": "晩秋の候",
+      "11月下旬": "向寒の候",
+      "12月": "師走の候",
+      "12月下旬": "歳末の候"
+    };
+
+    const seasonSelect = document.getElementById("season");
+    const letter = document.getElementById("letter");
+    const status = document.getElementById("status");
+
+    function makeLetter(selection) {
+      return `拝啓　${phrases[selection]}、ますますご健勝のこととお慶び申し上げます。また、日頃より青年会議所運動にひとかたならぬご理解とご協力を賜り厚く御礼申し上げます。`;
+    }
+
+    function updateLetter() {
+      letter.value = makeLetter(seasonSelect.value);
+      status.textContent = "";
+    }
+
+    function selectSeasonFromToday() {
+      const today = new Date();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+
+      let selection = `${month}月`;
+      if (month === 11 && day >= 21) selection = "11月下旬";
+      if (month === 12 && day >= 21) selection = "12月下旬";
+
+      seasonSelect.value = selection;
+      updateLetter();
+    }
+
+    seasonSelect.addEventListener("change", updateLetter);
+
+    document.getElementById("copy").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(letter.value);
+        status.textContent = "コピーしました。";
+      } catch (error) {
+        letter.focus();
+        letter.select();
+        const copied = document.execCommand("copy");
+        status.textContent = copied
+          ? "コピーしました。"
+          : "コピーできませんでした。Ctrl+cで、文章を選択してコピーしてください。";
+      }
+    });
+
+    selectSeasonFromToday();
+  </script>
+</body>
+</html>
