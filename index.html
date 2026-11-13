@@ -2,193 +2,213 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>案内文の時候の挨拶 作成ツール</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="日付に合わせた時候の挨拶を選び、案内文を作成・コピーできるツールです。">
+  <title>案内文の時候の挨拶作成ツール</title>
   <style>
+    :root {
+      color-scheme: light;
+      --ink: #243247;
+      --muted: #667085;
+      --line: #dce3eb;
+      --accent: #245b85;
+      --accent-hover: #194766;
+      --surface: #f5f8fb;
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 24px 16px;
-      background: #f5f6f8;
-      color: #222;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+      padding: 32px 16px 48px;
+      background: var(--surface);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP",
+                   "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.7;
     }
-    main {
-      width: 100%;
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 24px;
+    main { max-width: 820px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.5rem, 4vw, 2rem); }
+    .intro { margin: 0 0 24px; color: var(--muted); }
+    .panel {
       background: #fff;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--line);
       border-radius: 14px;
-      box-shadow: 0 4px 18px rgba(0,0,0,.04);
+      padding: 22px;
+      box-shadow: 0 4px 18px rgba(31, 52, 73, .05);
     }
-    h1 { margin: 0 0 22px; font-size: 1.35rem; }
-    label { display: block; margin: 0 0 8px; font-weight: 600; }
-    select, textarea, button {
-      width: 100%;
-      font: inherit;
-      border-radius: 8px;
-    }
-    select {
-      padding: 12px;
-      border: 1px solid #cbd0d8;
-      background: #fff;
-      margin-bottom: 20px;
-    }
-    textarea {
+    label { display: block; margin: 0 0 8px; font-weight: 700; }
+    .date-note { color: var(--muted); font-size: .9rem; margin: 0 0 14px; }
+    select, textarea {
       display: block;
-      min-height: 150px;
-      padding: 14px;
-      line-height: 1.8;
-      border: 1px solid #cbd0d8;
-      resize: vertical;
+      width: 100%;
+      border: 1px solid #c8d2de;
+      border-radius: 9px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
     }
+    select { padding: 11px 12px; margin-bottom: 18px; }
+    textarea { min-height: 145px; padding: 13px; resize: vertical; }
+    .actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
     button {
-      margin-top: 14px;
-      padding: 13px 16px;
       border: 0;
-      background: #2457c5;
+      border-radius: 9px;
+      background: var(--accent);
       color: #fff;
-      font-weight: 600;
+      padding: 11px 22px;
+      font: inherit;
+      font-weight: 700;
       cursor: pointer;
     }
-    button:hover { background: #1947a8; }
-    #status {
-      min-height: 1.5em;
-      margin: 8px 0 0;
-      color: #267342;
-      font-size: .9rem;
-    }
-    .list-title { margin: 28px 0 10px; font-size: 1.05rem; }
-    .phrase-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
-    .phrase-table th, .phrase-table td {
-      padding: 10px 9px; border-bottom: 1px solid #e5e7eb;
-      text-align: left; vertical-align: top;
-    }
-    .phrase-table th { background: #add8e6; font-weight: 600; }
-    .phrase-table tr:last-child td { border-bottom: 0; }
-    @media (max-width: 480px) {
-      .phrase-table th, .phrase-table td { padding: 9px 6px; font-size: .86rem; }
-    }
-    @media (max-width: 480px) {
-      main { padding: 20px 16px; }
-      body { padding: 12px; }
+    button:hover { background: var(--accent-hover); }
+    #copyStatus { color: #267044; font-size: .92rem; min-height: 1.5em; }
+    h2 { margin: 32px 0 12px; font-size: 1.25rem; }
+    .table-wrap { overflow-x: auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; min-width: 520px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { background: #add8e6; font-weight: 700; }
+    tbody tr:last-child td { border-bottom: 0; }
+    td:first-child { white-space: nowrap; }
+    .small { color: var(--muted); font-size: .88rem; margin-top: 12px; }
+    @media (max-width: 560px) {
+      body { padding: 22px 12px 36px; }
+      .panel { padding: 16px; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>案内文の時候の挨拶 作成ツール</h1>
+<main>
+  <h1>案内文の時候の挨拶作成ツール</h1>
+  <p class="intro">日付に合わせた時候の挨拶を自動で選び、案内文を作成できます。</p>
 
-    <label for="season">時候の挨拶を選択</label>
-    <select id="season">
-      <option value="1月">1月</option>
-      <option value="2月">2月</option>
-      <option value="3月">3月</option>
-      <option value="4月">4月</option>
-      <option value="5月">5月</option>
-      <option value="6月">6月</option>
-      <option value="7月">7月</option>
-      <option value="8月">8月</option>
-      <option value="9月">9月</option>
-      <option value="10月">10月</option>
-      <option value="11月">11月</option>
-      <option value="11月下旬">11月下旬</option>
-      <option value="12月">12月</option>
-      <option value="12月下旬">12月下旬</option>
-    </select>
+  <section class="panel" aria-label="案内文作成">
+    <label for="seasonSelect">時候の挨拶</label>
+    <p class="date-note" id="todayNote"></p>
+    <select id="seasonSelect"></select>
 
-    <label for="letter">案内文</label>
-    <textarea id="letter" spellcheck="false"></textarea>
+    <label for="greetingText">案内文</label>
+    <textarea id="greetingText" spellcheck="false">拝啓　時候の候、ますますご健勝のこととお慶び申し上げます。また、日頃より青年会議所運動にひとかたならぬご理解とご協力を賜り、厚く御礼申し上げます。</textarea>
 
-    <button id="copy" type="button">文章をコピー</button>
-    <p id="status" role="status" aria-live="polite"></p>
+    <div class="actions">
+      <button type="button" id="copyButton">文章をコピー</button>
+      <span id="copyStatus" role="status" aria-live="polite"></span>
+    </div>
+  </section>
 
-	<hr>
-    <h2 class="list-title">▼時候の挨拶一覧</h2>
-    <table class="phrase-table">
-      <thead><tr><th>月</th><th>時候の挨拶</th><th>読み方</th></tr></thead>
-      <tbody>
-        <tr><td>1月</td><td>新春の候</td><td>しんしゅんのこう</td></tr>
-        <tr><td>2月</td><td>立春の候</td><td>りっしゅんのこう</td></tr>
-        <tr><td>3月</td><td>早春の候</td><td>そうしゅんのこう</td></tr>
-        <tr><td>4月</td><td>陽春の候</td><td>ようしゅんのこう</td></tr>
-        <tr><td>5月</td><td>新緑の候</td><td>しんりょくのこう</td></tr>
-        <tr><td>6月</td><td>初夏の候</td><td>しょかのこう</td></tr>
-        <tr><td>7月</td><td>盛夏の候</td><td>せいかのこう</td></tr>
-        <tr><td>8月</td><td>残暑の候</td><td>ざんしょのこう</td></tr>
-        <tr><td>9月</td><td>初秋の候</td><td>しょしゅうのこう</td></tr>
-        <tr><td>10月</td><td>秋冷の候</td><td>しゅうれいのこう</td></tr>
-        <tr><td>11月</td><td>晩秋の候</td><td>ばんしゅうのこう</td></tr>
-        <tr><td>11月下旬</td><td>向寒の候</td><td>こうかんのこう</td></tr>
-        <tr><td>12月</td><td>師走の候</td><td>しわすのこう</td></tr>
-        <tr><td>12月下旬</td><td>歳末の候</td><td>さいまつのこう</td></tr>
-      </tbody>
+  <h2>▼時候の挨拶一覧（1～6日:初旬、7～21日:中旬、22～月末：下旬）</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>月</th><th>時期</th><th>時候の挨拶</th><th>読み方</th></tr>
+      </thead>
+      <tbody id="seasonTable"></tbody>
     </table>
-  </main>
+  </div>
+  <p class="small">※上旬・中旬・下旬は日付による目安です。実際の季節感に合わせて選んでください。</p>
+</main>
 
-  <script>
-    const phrases = {
-      "1月": "新春の候",
-      "2月": "立春の候",
-      "3月": "早春の候",
-      "4月": "陽春の候",
-      "5月": "新緑の候",
-      "6月": "初夏の候",
-      "7月": "盛夏の候",
-      "8月": "残暑の候",
-      "9月": "初秋の候",
-      "10月": "秋冷の候",
-      "11月": "晩秋の候",
-      "11月下旬": "向寒の候",
-      "12月": "師走の候",
-      "12月下旬": "歳末の候"
-    };
+<script>
+  const seasons = [
+    { month: 1, period: "上旬", phrase: "新春の候", reading: "しんしゅんのこう" },
+    { month: 1, period: "中旬", phrase: "寒中の候", reading: "かんちゅうのこう" },
+    { month: 1, period: "下旬", phrase: "大寒の候", reading: "だいかんのこう" },
 
-    const seasonSelect = document.getElementById("season");
-    const letter = document.getElementById("letter");
-    const status = document.getElementById("status");
+    { month: 2, period: "上旬", phrase: "立春の候", reading: "りっしゅんのこう" },
+    { month: 2, period: "中旬", phrase: "余寒の候", reading: "よかんのこう" },
+    { month: 2, period: "下旬", phrase: "春寒の候", reading: "しゅんかんのこう" },
 
-    function makeLetter(selection) {
-      return `拝啓　${phrases[selection]}、ますますご健勝のこととお慶び申し上げます。また、日頃より青年会議所運動にひとかたならぬご理解とご協力を賜り厚く御礼申し上げます。`;
-    }
+    { month: 3, period: "上旬", phrase: "早春の候", reading: "そうしゅんのこう" },
+    { month: 3, period: "中旬", phrase: "仲春の候", reading: "ちゅうしゅんのこう" },
+    { month: 3, period: "下旬", phrase: "春分の候", reading: "しゅんぶんのこう" },
 
-    function updateLetter() {
-      letter.value = makeLetter(seasonSelect.value);
-      status.textContent = "";
-    }
+    { month: 4, period: "上旬", phrase: "陽春の候", reading: "ようしゅんのこう" },
+    { month: 4, period: "中旬", phrase: "春陽の候", reading: "しゅんようのこう" },
+    { month: 4, period: "下旬", phrase: "晩春の候", reading: "ばんしゅんのこう" },
 
-    function selectSeasonFromToday() {
-      const today = new Date();
-      const month = today.getMonth() + 1;
-      const day = today.getDate();
+    { month: 5, period: "上旬", phrase: "新緑の候", reading: "しんりょくのこう" },
+    { month: 5, period: "中旬", phrase: "薫風の候", reading: "くんぷうのこう" },
+    { month: 5, period: "下旬", phrase: "万緑の候", reading: "ばんりょくのこう" },
 
-      let selection = `${month}月`;
-      if (month === 11 && day >= 21) selection = "11月下旬";
-      if (month === 12 && day >= 21) selection = "12月下旬";
+    { month: 6, period: "上旬", phrase: "初夏の候", reading: "しょかのこう" },
+    { month: 6, period: "中旬", phrase: "向暑の候", reading: "こうしょのこう" },
+    { month: 6, period: "下旬", phrase: "梅雨の候", reading: "ばいうのこう" },
 
-      seasonSelect.value = selection;
-      updateLetter();
-    }
+    { month: 7, period: "上旬", phrase: "小暑の候", reading: "しょうしょのこう" },
+    { month: 7, period: "中旬", phrase: "盛夏の候", reading: "せいかのこう" },
+    { month: 7, period: "下旬", phrase: "大暑の候", reading: "たいしょのこう" },
 
-    seasonSelect.addEventListener("change", updateLetter);
+    { month: 8, period: "上旬", phrase: "立秋の候", reading: "りっしゅうのこう" },
+    { month: 8, period: "中旬", phrase: "残暑の候", reading: "ざんしょのこう" },
+    { month: 8, period: "下旬", phrase: "秋暑の候", reading: "しゅうしょのこう" },
 
-    document.getElementById("copy").addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(letter.value);
-        status.textContent = "コピーしました。";
-      } catch (error) {
-        letter.focus();
-        letter.select();
-        const copied = document.execCommand("copy");
-        status.textContent = copied
-          ? "コピーしました。"
-          : "コピーできませんでした。文章を選択してコピーしてください。";
-      }
+    { month: 9, period: "上旬", phrase: "初秋の候", reading: "しょしゅうのこう" },
+    { month: 9, period: "中旬", phrase: "爽秋の候", reading: "そうしゅうのこう" },
+    { month: 9, period: "下旬", phrase: "秋涼の候", reading: "しゅうりょうのこう" },
+
+    { month: 10, period: "上旬", phrase: "秋晴の候", reading: "しゅうせいのこう" },
+    { month: 10, period: "中旬", phrase: "秋麗の候", reading: "しゅうれいのこう" },
+    { month: 10, period: "下旬", phrase: "秋冷の候", reading: "しゅうれいのこう" },
+
+    { month: 11, period: "上旬", phrase: "晩秋の候", reading: "ばんしゅうのこう" },
+    { month: 11, period: "中旬", phrase: "立冬の候", reading: "りっとうのこう" },
+    { month: 11, period: "下旬", phrase: "初冬の候", reading: "しょとうのこう" },
+
+    { month: 12, period: "上旬", phrase: "初冬の候", reading: "しょとうのこう" },
+    { month: 12, period: "中旬", phrase: "師走の候", reading: "しわすのこう" },
+    { month: 12, period: "下旬", phrase: "歳末の候", reading: "さいまつのこう" }
+  ];
+
+  const select = document.getElementById("seasonSelect");
+  const textarea = document.getElementById("greetingText");
+  const today = new Date();
+  const day = today.getDate();
+  const period = day <= 10 ? "上旬" : day <= 20 ? "中旬" : "下旬";
+  const currentIndex = seasons.findIndex(item => item.month === today.getMonth() + 1 && item.period === period);
+
+  seasons.forEach((item, index) => {
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = `${item.month}月 ${item.period}：${item.phrase}（${item.reading}）`;
+    select.appendChild(option);
+  });
+
+  function updateGreeting() {
+    const item = seasons[Number(select.value)];
+    const base = "ますますご健勝のこととお慶び申し上げます。また、日頃より青年会議所運動にひとかたならぬご理解とご協力を賜り、厚く御礼申し上げます。";
+    textarea.value = `拝啓　${item.phrase}、${base}`;
+  }
+
+  select.value = String(currentIndex >= 0 ? currentIndex : 0);
+  document.getElementById("todayNote").textContent =
+    `本日：${today.getFullYear()}年${today.getMonth() + 1}月${day}日（${period}）`;
+
+  // 初回は日付に対応する時候を本文に反映
+  updateGreeting();
+
+  select.addEventListener("change", updateGreeting);
+
+  const tbody = document.getElementById("seasonTable");
+  seasons.forEach(item => {
+    const row = document.createElement("tr");
+    [ `${item.month}月`, item.period, item.phrase, item.reading ].forEach(value => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.appendChild(cell);
     });
+    tbody.appendChild(row);
+  });
 
-    selectSeasonFromToday();
-  </script>
+  document.getElementById("copyButton").addEventListener("click", async () => {
+    const status = document.getElementById("copyStatus");
+    try {
+      await navigator.clipboard.writeText(textarea.value);
+      status.textContent = "コピーしました！";
+    } catch (error) {
+      textarea.focus();
+      textarea.select();
+      const copied = document.execCommand("copy");
+      status.textContent = copied ? "コピーしました！" : "コピーできませんでした。文章を選択してコピーしてください。";
+    }
+  });
+</script>
 </body>
 </html>
